@@ -14,6 +14,7 @@ import {
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { JwtGuard } from 'src/auth/guard';
+import { HistoryService } from 'src/history/history.service';
 import { CreateKeywordDto, EditKeywordDto } from './dto';
 import { KeywordService } from './keyword.service';
 
@@ -22,7 +23,10 @@ import { KeywordService } from './keyword.service';
 @UseGuards(JwtGuard)
 @Controller('keywords')
 export class KeywordController {
-  constructor(private keywordService: KeywordService) {}
+  constructor(
+    private keywordService: KeywordService,
+    private historyService: HistoryService,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Get keywords' })
@@ -63,5 +67,14 @@ export class KeywordController {
     @Param('id', ParseIntPipe) keywordId: number,
   ) {
     return this.keywordService.deleteKeywordById(userId, keywordId);
+  }
+
+  @ApiOperation({ summary: 'Get histories by keyword id' })
+  @Get(':id/histories')
+  getHistoriesByKeywordId(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) keywordId: number,
+  ) {
+    return this.historyService.getHistoriesByKeywordId(userId, keywordId);
   }
 }

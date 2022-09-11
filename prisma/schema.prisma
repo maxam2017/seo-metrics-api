@@ -20,6 +20,7 @@ model User {
   name  String?
 
   keywords Keyword[]
+  History  History[]
 
   @@map("users")
 }
@@ -34,8 +35,39 @@ model Keyword {
   description String?
   enabled     Boolean
 
-  userId Int
-  user   User @relation(fields: [userId], references: [id])
+  userId  Int
+  user    User      @relation(fields: [userId], references: [id])
+  History History[]
 
   @@map("keywords")
+}
+
+model History {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  search_results SearchResult[]
+
+  userId    Int
+  keywordId Int
+  user      User    @relation(fields: [userId], references: [id])
+  keyword   Keyword @relation(fields: [keywordId], references: [id])
+
+  @@map("histories")
+}
+
+model SearchResult {
+  id Int @id @default(autoincrement())
+
+  href       String
+  title      String
+  breadcrumb String?
+  content    Json // { images: string[], text: string }
+  hasReviews Boolean
+
+  historyId Int
+  History   History @relation(fields: [historyId], references: [id])
+
+  @@map("search_results")
 }
