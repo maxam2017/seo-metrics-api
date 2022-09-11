@@ -11,22 +11,27 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { CreateKeywordDto, EditKeywordDto } from './dto';
 import { KeywordService } from './keyword.service';
 
+@ApiBearerAuth()
+@ApiTags('Keyword')
 @UseGuards(JwtGuard)
 @Controller('keywords')
 export class KeywordController {
   constructor(private keywordService: KeywordService) {}
 
   @Get()
+  @ApiOperation({ summary: 'Get keywords' })
   getKeywords(@GetUser('id') userId: number) {
     return this.keywordService.getKeywords(userId);
   }
 
   @Get(':id')
+  @ApiOperation({ summary: 'Get keyword by id' })
   getKeywordById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) keywordId: number,
@@ -35,11 +40,13 @@ export class KeywordController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create keyword' })
   createKeyword(@GetUser('id') userId: number, @Body() dto: CreateKeywordDto) {
     return this.keywordService.createKeyword(userId, dto);
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Edit keyword by id' })
   editKeywordById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) keywordId: number,
@@ -50,6 +57,7 @@ export class KeywordController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete keyword by id' })
   deleteKeywordById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) keywordId: number,
