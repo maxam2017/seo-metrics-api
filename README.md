@@ -1,4 +1,4 @@
-# SEO Metrics Server
+# SEO Metrics API
 
 
 ## Installation
