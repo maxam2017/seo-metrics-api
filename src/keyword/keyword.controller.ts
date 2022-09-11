@@ -15,6 +15,7 @@ import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { GetUser } from 'src/auth/decorator/get-user.decorator';
 import { JwtGuard } from 'src/auth/guard';
 import { HistoryService } from 'src/history/history.service';
+import { TaskService } from 'src/task/task.service';
 import { CreateKeywordDto, EditKeywordDto } from './dto';
 import { KeywordService } from './keyword.service';
 
@@ -26,6 +27,7 @@ export class KeywordController {
   constructor(
     private keywordService: KeywordService,
     private historyService: HistoryService,
+    private taskService: TaskService,
   ) {}
 
   @Get()
@@ -76,5 +78,14 @@ export class KeywordController {
     @Param('id', ParseIntPipe) keywordId: number,
   ) {
     return this.historyService.getHistoriesByKeywordId(userId, keywordId);
+  }
+
+  @ApiOperation({ summary: 'Run task by keyword id' })
+  @Post(':id/run')
+  runTaskByKeywordId(
+    @GetUser('id') userId: number,
+    @Param('id', ParseIntPipe) keywordId: number,
+  ) {
+    return this.taskService.runUserTask(userId, keywordId);
   }
 }
