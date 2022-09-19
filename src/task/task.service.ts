@@ -55,7 +55,24 @@ export class TaskService {
       args: [`--lang=${Lang}`, '--no-sandbox'],
       headless: true,
     });
+
     const page = await browser.newPage();
+    // Specify browser language in Puppeteer
+    // ref: https://stackoverflow.com/questions/46908636/how-to-specify-browser-language-in-puppeteer
+    await page.setExtraHTTPHeaders({ 'Accept-Language': Lang });
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, 'language', {
+        get: function () {
+          return Lang;
+        },
+      });
+      Object.defineProperty(navigator, 'languages', {
+        get: function () {
+          return [Lang];
+        },
+      });
+    });
+
     // await page.emulate(puppeteer.devices[Device]);
     await page.goto(GoogleSearchUrl, { waitUntil: 'networkidle0' });
     await page.waitForSelector('input[name=q]');
