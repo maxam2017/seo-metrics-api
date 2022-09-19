@@ -24,6 +24,8 @@ $ npx prisma migrate dev
 $ pnpm run start:dev
 
 # production mode
+$ docker compose up db -d
+$ pnpm run build
 $ pnpm run start:prod
 ```
 

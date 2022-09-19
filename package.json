@@ -7,8 +7,8 @@
   "license": "UNLICENSED",
   "scripts": {
     "prisma:dev:deploy": "prisma migrate deploy",
-    "db:dev:rm": "docker compose rm dev-db -sfv",
-    "db:dev:up": "docker compose up dev-db -d",
+    "db:dev:rm": "docker compose -f docker-compose.dev.yml rm dev-db -sfv",
+    "db:dev:up": "docker compose -f docker-compose.dev.yml up dev-db -d",
     "db:dev:restart": "pnpm db:dev:rm && pnpm db:dev:up && sleep 1 && pnpm prisma:dev:deploy",
     "prebuild": "rimraf dist",
     "build": "nest build",

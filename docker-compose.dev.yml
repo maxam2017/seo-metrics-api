@@ -1,6 +1,6 @@
 version: '3.8'
 services:
-  db:
+  dev-db:
     image: postgres:13
     ports:
       - ${POSTGRES_PORT}:5432
@@ -8,3 +8,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
+    networks:
+      - foo
+networks:
+  foo:
