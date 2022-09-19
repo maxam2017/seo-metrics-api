@@ -13,7 +13,7 @@ import { join } from 'path';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, expandVariables: true }),
     AuthModule,
     UserModule,
     KeywordModule,
