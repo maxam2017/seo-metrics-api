@@ -25,6 +25,7 @@ $ pnpm run start:dev
 
 # production mode
 $ docker compose up db -d
+$ prisma migrate deploy
 $ pnpm run build
 $ pnpm run start:prod
 ```
