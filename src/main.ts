@@ -1,6 +1,7 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { mkdirSync, readdirSync } from 'fs';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -23,3 +24,10 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();
+
+// create `media` folder for putting files
+try {
+  readdirSync('media');
+} catch {
+  mkdirSync('media');
+}

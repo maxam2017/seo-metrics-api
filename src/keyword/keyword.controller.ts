@@ -80,12 +80,13 @@ export class KeywordController {
     return this.historyService.getHistoriesByKeywordId(userId, keywordId);
   }
 
+  @HttpCode(HttpStatus.ACCEPTED)
   @ApiOperation({ summary: 'Run task by keyword id' })
   @Post(':id/run')
   runTaskByKeywordId(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) keywordId: number,
   ) {
-    return this.taskService.runUserTask(userId, keywordId);
+    this.taskService.runUserTask(userId, keywordId);
   }
 }
