@@ -35,15 +35,19 @@ model Keyword {
   description String?
   enabled     Boolean
 
-  userId  Int
-  user    User      @relation(fields: [userId], references: [id])
-  History History[]
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  History   History[]
 
   @@map("keywords")
 }
 
 model History {
-  id        Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
+
+  // hash code of search_results
+  hashCode String @unique
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

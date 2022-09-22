@@ -1,10 +1,12 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { Keyword, SearchResult } from '@prisma/client';
-import { mkdirSync, readdirSync } from 'fs';
+import { mkdirSync, readdirSync, unlink } from 'fs';
 import puppeteer from 'puppeteer';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UtilService } from 'src/util/util.service';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const hash = require('object-hash');
 
 @Injectable()
 export class TaskService {
@@ -133,19 +135,37 @@ export class TaskService {
 
     const promise = browser.close();
 
-    await this.prisma.history.create({
-      data: {
-        userId: keyword.userId,
-        keywordId: keyword.id,
-        media: media.map((filename) => `/${folderDest}/${filename}`),
-        search_results: {
-          create: results.map((result, index) => ({
-            ...result,
-            order: index + 1,
-          })),
+    const searchResult = results.map((result, index) => ({
+      ...result,
+      order: index + 1,
+    }));
+
+    const hashCode = hash(searchResult);
+
+    try {
+      await this.prisma.history.create({
+        data: {
+          userId: keyword.userId,
+          keywordId: keyword.id,
+          hashCode,
+          media: media.map((filename) => `/${folderDest}/${filename}`),
+          search_results: {
+            create: searchResult,
+          },
         },
-      },
-    });
+      });
+    } catch {
+      Logger.log(`Duplicated results - ${keyword.value} (${hashCode})`);
+
+      // remove the screenshot
+      await Promise.all(
+        media.map((filename) =>
+          unlink(`${folderDest}/${filename}`, () => {
+            // do nothing
+          }),
+        ),
+      );
+    }
 
     await promise;
   }
